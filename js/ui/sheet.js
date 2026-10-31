@@ -167,7 +167,7 @@ export function openKeypad({ title, fields, hint, onSave, onClear, presets }) {
 export function openForm({ title, fields, onSave, onDelete, saveLabel = 'Save', extra }) {
   const inputs = fields.map((f) =>
     h('input', {
-      type: 'text',
+      type: f.type === 'time' ? 'time' : 'text',
       inputmode: f.type === 'number' ? (f.decimals ? 'decimal' : 'numeric') : 'text',
       value: f.value ?? '',
       placeholder: f.placeholder || '',

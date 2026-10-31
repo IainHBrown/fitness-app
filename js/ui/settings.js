@@ -12,6 +12,7 @@ import { uid } from '../store/defaults.js';
 import { waterLabel } from './today.js';
 import { editFood } from './food.js';
 import { exportBackup, parseBackup, summarize, restoreBackup, eraseAll } from '../store/backup.js';
+import { notificationsSection } from './notify-settings.js';
 import { relativeDay, dateKey } from '../dates.js';
 
 export function renderSettings(root) {
@@ -84,6 +85,8 @@ export function renderSettings(root) {
         h('span', { class: 'grow' }, 'Run distance'),
         h('span', { class: 'val' }, s.units.distance === 'km' ? 'Kilometres' : 'Miles'))),
     note('Weights are always in lb.'),
+
+    notificationsSection(),
 
     dataSection(s),
     h('p', { class: 'list-note', style: { textAlign: 'center', marginTop: '24px' } }, 'All data is stored only on this iPhone.'),

@@ -13,6 +13,7 @@ import { renderSession } from './ui/session.js';
 import { renderPlanDay } from './ui/planday.js';
 import { renderExercise } from './ui/exercise.js';
 import { toast } from './ui/sheet.js';
+import { startSync } from './notify/push.js';
 
 registerView('today', renderToday);
 registerView('workouts', renderWorkouts);
@@ -30,6 +31,7 @@ async function start() {
   subscribe(() => render());
   go('today');
   watchMidnight();
+  startSync(); // keeps the notification Worker's summary current (if set up)
 
   if ('serviceWorker' in navigator) {
     // A new version took over (not the very first install): offer a reload.

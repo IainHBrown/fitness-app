@@ -2,7 +2,7 @@
 // Strategy: stale-while-revalidate. Serve from cache instantly, refresh the
 // cache in the background, so updates appear on the next launch.
 // Bump VERSION whenever you want to force every cached file to be replaced.
-const VERSION = 'v4';
+const VERSION = 'v5';
 const CACHE = `fitness-${VERSION}`;
 
 const SHELL = [
@@ -42,6 +42,9 @@ const SHELL = [
   'js/ui/run-sheet.js',
   'js/ui/training-card.js',
   'js/ui/chart.js',
+  'js/ui/notify-settings.js',
+  'js/notify/push.js',
+  'js/notify/summary.js',
   'icons/icon-192.png',
   'icons/icon-512.png',
   'icons/apple-touch-icon.png',
@@ -77,4 +80,26 @@ self.addEventListener('fetch', (e) => {
   );
 });
 
-// Future stage: 'push' and 'notificationclick' handlers go here.
+// ---------- Push notifications ----------
+
+self.addEventListener('push', (e) => {
+  let data = {};
+  try { data = e.data ? e.data.json() : {}; } catch { data = { body: e.data?.text() }; }
+  // iOS requires every push to show a notification
+  e.waitUntil(self.registration.showNotification(data.title || 'Fitness', {
+    body: data.body || '',
+    icon: 'icons/icon-192.png',
+    badge: 'icons/icon-192.png',
+    tag: data.tag || 'checkin',
+    data: { url: './' },
+  }));
+});
+
+// Tapping a notification opens (or focuses) the app.
+self.addEventListener('notificationclick', (e) => {
+  e.notification.close();
+  e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
+    for (const c of list) if ('focus' in c) return c.focus();
+    return self.clients.openWindow(e.notification.data?.url || './');
+  }));
+});

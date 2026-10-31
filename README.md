@@ -11,7 +11,7 @@ Single user, no login, no paid services. All data stays on the phone (IndexedDB)
 | 2 | Workouts: lifting plan, logging, progressive overload engine, running, workout streak | ✅ Done |
 | 3 | Progress tab charts, per-exercise strength chart | ✅ Done |
 | 4 | Export/import backup, food list in Settings, polish | ✅ Done |
-| 5 | Smart push notifications (Cloudflare Worker) | Later |
+| 5 | Smart lock-screen notifications (Cloudflare Worker) | ✅ Built (needs Cloudflare setup) |
 
 ## Run it locally (on your Mac)
 
@@ -117,6 +117,37 @@ Pick 7 days / 30 days / All time at the top; every card follows it.
 
 Charts are plain SVG (`js/ui/chart.js`), so there's no chart library. Tap or drag across a chart to read values.
 
+## Notifications (Cloudflare Worker)
+
+Lock-screen reminders at your check times (default 6:00 PM, 9:00 PM, 10:30 PM), sent only
+if something is behind, e.g. **💧 750 ml water left · 21-day streak at stake**.
+
+How it works: the app sends a small summary (water, supplements, today's workout, streaks,
+your preferences; never food, weight or sleep) to your own free Cloudflare Worker whenever it
+changes. The Worker wakes every 15 minutes and, at a check time, sends a Web Push if needed.
+Code: `worker/fitness-push.js`. Its encryption is checked against the RFC 8291 test vector.
+
+### One-time setup
+
+1. **Cloudflare account:** sign up free at dash.cloudflare.com.
+2. **Create the Worker:** *Workers & Pages → Create → Create Worker*, name it `fitness-push`,
+   **Deploy**. Then **Edit code**, delete everything, paste all of `worker/fitness-push.js`, **Deploy**.
+3. **Create storage:** *Storage & Databases → KV → Create* a namespace named `fitness-push`.
+4. **Connect storage:** Worker → *Settings → Bindings → Add → KV namespace*.
+   Variable name **`PUSH_KV`**, namespace `fitness-push`. Save.
+5. **Secret key:** in the app, *Settings → Notifications → Secret key → Generate key* (it's copied).
+   In Cloudflare: Worker → *Settings → Variables and Secrets → Add*, type **Secret**,
+   name **`APP_SECRET`**, paste the key. Save/Deploy.
+6. **Schedule:** Worker → *Settings → Triggers → Cron Triggers → Add*: `*/15 * * * *`.
+7. **Check it:** open the Worker URL (`https://fitness-push.<you>.workers.dev`) in a browser.
+   You should see `"kvBound": true, "secretSet": true`.
+8. **In the app (opened from the Home Screen):** *Settings → Notifications*:
+   paste the Worker URL into **Server URL**, turn on **Lock-screen reminders**, tap **Allow**,
+   then **Send test notification**.
+
+Everything fits Cloudflare's free plan (KV: 1,000 writes/day; the app syncs only when
+something changes). The secret key is included in backups.
+
 ## Project layout
 
 ```
@@ -133,7 +164,8 @@ js/store/state.js       In-memory state + persistence, per-day goal snapshots
 js/store/backup.js      Export / import / erase
 js/logic/               schedule, streaks, food, overload, history, training, runs (no UI)
 js/ui/                  One file per tab, plus shared dom/sheet/components/router
-js/notify/              Reserved for Stage 5 notifications
+js/notify/              Push subscription + summary sync
+worker/fitness-push.js  Cloudflare Worker (paste into the Cloudflare dashboard)
 icons/                  App icons (regenerate: python3 tools/make_icons.py)
 tools/                  Dev server and icon generator (not used by the app)
 ```

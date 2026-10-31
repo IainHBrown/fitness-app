@@ -43,6 +43,15 @@ export function defaultSettings() {
 
     lastBackupAt: null, // set when a backup is exported
 
+    // Lock-screen reminders via your own Cloudflare Worker (see worker/)
+    notifications: {
+      enabled: false,
+      workerUrl: '',
+      secret: '',
+      times: ['18:00', '21:00', '22:30'],
+      types: { water: true, supplements: true, workout: true },
+    },
+
     // Rough campus food values (calories, protein g) — fully editable
     foods: [
       { id: uid(), name: '6" Subway sub', cal: 420, protein: 25 },
