@@ -1,0 +1,42 @@
+/* Design tokens: deep navy, muted blue accent, off-white text.
+   Nothing bright, no pure white, no pure black. */
+:root {
+  color-scheme: dark;
+
+  --bg: #0a1322;
+  --bg-blur: rgba(10, 19, 34, 0.82);
+  --card: #111d33;
+  --card-solid-2: #182743;
+  --line: rgba(150, 175, 220, 0.10);
+  --line-strong: rgba(150, 175, 220, 0.18);
+
+  --text: #e3e7ef;
+  --text-2: #9ba7bf;
+  --text-3: #66738f;
+
+  --accent: #7b9bd1;
+  --accent-strong: #8eabdc;
+  --accent-soft: rgba(123, 155, 209, 0.15);
+  --accent-ink: #0d1830;
+
+  --good: #6fae9f;
+  --good-soft: rgba(111, 174, 159, 0.15);
+  --warn: #c4a272;
+  --warn-soft: rgba(196, 162, 114, 0.13);
+  --bad: #bd8686;
+  --bad-soft: rgba(189, 134, 134, 0.13);
+
+  --radius: 18px;
+  --radius-sm: 12px;
+  --gap: 12px;
+  --gutter: 16px;
+
+  --tabbar-h: 56px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
+  --font-round: ui-rounded, -apple-system, "SF Pro Rounded", system-ui, sans-serif;
+
+  --ease: cubic-bezier(0.25, 0.8, 0.25, 1);
+}
